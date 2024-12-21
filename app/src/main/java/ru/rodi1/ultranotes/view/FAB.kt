@@ -9,9 +9,9 @@ import androidx.compose.ui.res.painterResource
 import ru.rodi1.ultranotes.R
 
 @Composable
-fun FAB() {
+fun FAB(onClick: () -> Unit) {
     FloatingActionButton(
-        onClick = { /*TODO*/ },
+        onClick = onClick,
         containerColor = Color.Blue,
         contentColor = Color.White,
         shape = CircleShape

@@ -9,7 +9,7 @@ class NotesViewModel : ViewModel() {
     private val _notes = MutableLiveData<List<Note>>(emptyList())
     val notes: LiveData<List<Note>> = _notes
 
-    private var nextId = 1
+    private var nextId = 0
 
     fun addNote() {
         val newNote = Note(
