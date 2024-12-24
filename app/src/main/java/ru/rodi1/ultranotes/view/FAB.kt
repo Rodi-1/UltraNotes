@@ -9,7 +9,7 @@ import androidx.compose.ui.res.painterResource
 import ru.rodi1.ultranotes.R
 
 @Composable
-fun FAB(onClick: () -> Unit) {
+fun FAB(onClick: () -> Unit) { // Плавающая кнопка добавления заметки
     FloatingActionButton(
         onClick = onClick,
         containerColor = Color.Blue,

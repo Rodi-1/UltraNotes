@@ -3,13 +3,14 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 
-//    kotlin("kapt") version "2.1.0"
+    kotlin("kapt") version "2.1.0"
     id("com.google.devtools.ksp")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
     namespace = "ru.rodi1.ultranotes"
-    compileSdk = 35
+    compileSdk = 35 // androidx.core:core:1.15.0 и androidx.core:core-ktx:1.15.0 требуют, чтобы проект был собран как минимум с compileSdkVersion = 35
 
     defaultConfig {
         applicationId = "ru.rodi1.ultranotes"
@@ -63,4 +64,12 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    implementation(libs.hilt.android)
+    implementation(libs.androidx.hilt.navigation.compose)
+    kapt(libs.hilt.android.compiler)
+}
+
+kapt {
+    correctErrorTypes = true
 }

@@ -9,18 +9,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ru.rodi1.ultranotes.ui.theme.UltraNotesTheme
+import androidx.hilt.navigation.compose.hiltViewModel
+import ru.rodi1.ultranotes.viewmodel.NotesViewModel
 
 
 @Composable
 fun NoteEditorScreen(
-    onSaveClick: (String, String) -> Unit // Функция для сохранения заметки: принимает заголовок и текст
+    onBack: () -> Unit // Функция, которая будет вызываться после нажатия на кнопку, и передаваться из MainActivity
 ) {
     var title by remember { mutableStateOf("") }
     var content by remember { mutableStateOf("") }
+
+    val notesViewModel = hiltViewModel<NotesViewModel>()
 
     Column(
         modifier = Modifier
@@ -65,7 +67,9 @@ fun NoteEditorScreen(
 
         // Кнопка "Сохранить"
         Button(
-            onClick = { onSaveClick(title, content) },
+            onClick = {
+                notesViewModel.addNote(title, content)
+                onBack() },
             modifier = Modifier
                 .align(Alignment.End)
         ) {
@@ -74,13 +78,13 @@ fun NoteEditorScreen(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun NoteEditorScreenPreview() {
-    UltraNotesTheme {
-        NoteEditorScreen(onSaveClick = { title, content ->
-            Log.d("NoteEditorScreenPreview", "Title: $title")
-            Log.d("NoteEditorScreenPreview", "Content: $content")
-        })
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun NoteEditorScreenPreview() {
+//    UltraNotesTheme {
+//        NoteEditorScreen(onSaveClick = { title, content ->
+//            Log.d("NoteEditorScreenPreview", "Title: $title")
+//            Log.d("NoteEditorScreenPreview", "Content: $content")
+//        })
+//    }
+//}
