@@ -1,41 +1,74 @@
 package ru.rodi1.ultranotes.view
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import ru.rodi1.ultranotes.viewmodel.NotesViewModel
+import ru.rodi1.ultranotes.ui.theme.UltraNotesTheme
+import ru.rodi1.ultranotes.viewmodel.NoteEditorViewModel
+import ru.rodi1.ultranotes.viewmodel.NotesListViewModel
+
+//TODO+
+// Нужно будет передавать заголовок и контент из вне, чтобы отображать уже созданную заметку из бд.
+// При этом нужны дефолтные значения для случая создания новой заметки
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NoteEditorScreen(
-    onBack: () -> Unit // Функция, которая будет вызываться после нажатия на кнопку, и передаваться из MainActivity
+    viewModel: NoteEditorViewModel,
+    onBack: () -> Unit
 ) {
+    val note by viewModel.note.collectAsState()
+
     var title by remember { mutableStateOf("") }
     var content by remember { mutableStateOf("") }
 
-    val notesViewModel = hiltViewModel<NotesViewModel>()
+    // Обновляем поля при изменении заметки
+    LaunchedEffect(note) {
+        title = note?.title ?: ""
+        content = note?.content ?: ""
+    }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.SpaceBetween
-    ) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(if (note != null) "Edit Note" else "New Note") },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                    }
+                },
+                actions = {
+                    IconButton(onClick = {
+                        viewModel.saveNote(title, content)
+                        onBack()
+                    }) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "Save")
+                    }
+                }
+            )
+        }
+    ) { paddingValues ->
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Top
         ) {
-            // Поле для заголовка
             OutlinedTextField(
                 value = title,
                 onValueChange = { title = it },
@@ -48,7 +81,6 @@ fun NoteEditorScreen(
                     .padding(bottom = 16.dp)
             )
 
-            // Поле для содержимого заметки
             OutlinedTextField(
                 value = content,
                 onValueChange = { content = it },
@@ -58,33 +90,16 @@ fun NoteEditorScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(bottom = 16.dp),
-                maxLines = Int.MAX_VALUE,
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Done
-                )
+                maxLines = Int.MAX_VALUE
             )
-        }
-
-        // Кнопка "Сохранить"
-        Button(
-            onClick = {
-                notesViewModel.addNote(title, content)
-                onBack() },
-            modifier = Modifier
-                .align(Alignment.End)
-        ) {
-            Text("Save")
         }
     }
 }
 
-//@Preview(showBackground = true)
-//@Composable
-//fun NoteEditorScreenPreview() {
-//    UltraNotesTheme {
-//        NoteEditorScreen(onSaveClick = { title, content ->
-//            Log.d("NoteEditorScreenPreview", "Title: $title")
-//            Log.d("NoteEditorScreenPreview", "Content: $content")
-//        })
-//    }
-//}
+@Preview(showBackground = true)
+@Composable
+fun NoteEditorScreenPreview() {
+    UltraNotesTheme {
+        NoteEditorScreen(hiltViewModel(), {})
+    }
+}

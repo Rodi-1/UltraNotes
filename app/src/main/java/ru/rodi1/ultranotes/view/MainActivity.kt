@@ -9,12 +9,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
+import ru.rodi1.ultranotes.viewmodel.NoteEditorViewModel
+import ru.rodi1.ultranotes.viewmodel.NotesListViewModel
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -24,6 +29,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val navController = rememberNavController()
+
             MaterialTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -40,18 +46,41 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun AppNavHost(navController: NavHostController) {
     NavHost(
-        navController,
+        navController = navController,
         startDestination = "notesList"
     ) {
         composable("notesList") {
+            val notesListViewModel: NotesListViewModel = hiltViewModel()
+            val notes by notesListViewModel.notes.collectAsState()
 
             NotesListScreen(
-                onFabClick = { navController.navigate("noteEditor") }
+                notes = notes,
+                onFabClick = { navController.navigate("noteEditor") },
+                onNoteClick = { noteId ->
+                    navController.navigate("noteEditor/$noteId")
+                },
+                onDeleteClick = { note ->
+                    notesListViewModel.deleteNote(note)
+                }
             )
         }
         composable("noteEditor") {
+            val noteEditorViewModel: NoteEditorViewModel = hiltViewModel()
             NoteEditorScreen(
-                onBack = {navController.popBackStack() }
+                viewModel = noteEditorViewModel,
+                onBack = { navController.popBackStack() }
+            )
+        }
+        composable("noteEditor/{noteId}") { backStackEntry ->
+            val noteId = backStackEntry.arguments?.getString("noteId")?.toIntOrNull()
+            val noteEditorViewModel: NoteEditorViewModel = hiltViewModel()
+            if (noteId != null) {
+                // Загрузка заметки по ID
+                noteEditorViewModel.loadNote(noteId)
+            }
+            NoteEditorScreen(
+                viewModel = noteEditorViewModel,
+                onBack = { navController.popBackStack() }
             )
         }
     }

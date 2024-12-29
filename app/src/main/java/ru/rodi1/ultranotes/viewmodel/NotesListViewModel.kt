@@ -12,7 +12,7 @@ import ru.rodi1.ultranotes.model.Note
 import javax.inject.Inject
 
 @HiltViewModel
-class NotesViewModel @Inject constructor(
+class NotesListViewModel @Inject constructor(
     private val repository: NotesRepository
 ) : ViewModel() {
 
@@ -23,31 +23,6 @@ class NotesViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5000L), // 5 секунд до завершения (на случай изменения конфигурации (чтобы не перезапускалось при повороте экрана))
             initialValue = emptyList()
         )
-
-    // Метод для добавления новой заметки
-    fun addNote(title: String = "New Note", content: String = "") {
-        viewModelScope.launch {
-            val newNote = Note(
-                title = title,
-                content = content
-            )
-            repository.addNote(newNote)
-        }
-    }
-
-    // Метод для обновления существующей заметки
-    fun updateNote(noteId: Int, title: String, content: String) {
-        viewModelScope.launch {
-            // Допустим, у нас есть Note, который мы хотим обновить
-            // либо нам нужно сначала найти note по id
-            val updatedNote = Note(
-                id = noteId,
-                title = title,
-                content = content
-            )
-            repository.updateNote(updatedNote)
-        }
-    }
 
     // Метод для удаления
     fun deleteNote(note: Note) {
