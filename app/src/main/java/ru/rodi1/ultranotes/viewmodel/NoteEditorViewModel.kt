@@ -6,7 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.rodi1.ultranotes.data.NotesRepository
-import ru.rodi1.ultranotes.model.Note
+import ru.rodi1.ultranotes.data.local.Note
 import javax.inject.Inject
 
 @HiltViewModel

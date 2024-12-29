@@ -1,4 +1,4 @@
-package ru.rodi1.ultranotes.view
+package ru.rodi1.ultranotes.presentation.notesList
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -22,13 +22,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import ru.rodi1.ultranotes.model.Note
-import ru.rodi1.ultranotes.viewmodel.NotesListViewModel
+import ru.rodi1.ultranotes.data.local.Note
+import ru.rodi1.ultranotes.presentation.components.FAB
 
 
 @Composable

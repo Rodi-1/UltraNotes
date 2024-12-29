@@ -1,4 +1,4 @@
-package ru.rodi1.ultranotes.view
+package ru.rodi1.ultranotes.presentation.components
 
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.FloatingActionButton

@@ -1,4 +1,4 @@
-package ru.rodi1.ultranotes.model
+package ru.rodi1.ultranotes.di
 
 import android.content.Context
 import androidx.room.Room
@@ -7,6 +7,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import ru.rodi1.ultranotes.data.local.NoteDao
+import ru.rodi1.ultranotes.data.local.NoteDatabase
 import javax.inject.Singleton
 
 @Module

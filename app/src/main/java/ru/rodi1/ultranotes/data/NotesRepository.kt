@@ -1,8 +1,8 @@
 package ru.rodi1.ultranotes.data
 
 import kotlinx.coroutines.flow.Flow
-import ru.rodi1.ultranotes.model.Note
-import ru.rodi1.ultranotes.model.NoteDao
+import ru.rodi1.ultranotes.data.local.Note
+import ru.rodi1.ultranotes.data.local.NoteDao
 import javax.inject.Inject
 import javax.inject.Singleton
 

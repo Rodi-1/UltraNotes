@@ -1,24 +1,19 @@
-package ru.rodi1.ultranotes.view
+package ru.rodi1.ultranotes.presentation.noteEditor
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import ru.rodi1.ultranotes.ui.theme.UltraNotesTheme
 import ru.rodi1.ultranotes.viewmodel.NoteEditorViewModel
-import ru.rodi1.ultranotes.viewmodel.NotesListViewModel
 
 //TODO+
 // Нужно будет передавать заголовок и контент из вне, чтобы отображать уже созданную заметку из бд.

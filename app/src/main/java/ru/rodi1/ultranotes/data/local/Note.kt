@@ -1,4 +1,4 @@
-package ru.rodi1.ultranotes.model
+package ru.rodi1.ultranotes.data.local
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
