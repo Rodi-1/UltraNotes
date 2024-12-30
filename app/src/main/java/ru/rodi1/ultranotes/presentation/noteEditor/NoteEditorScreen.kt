@@ -37,10 +37,24 @@ fun NoteEditorScreen(
         content = note?.content ?: ""
     }
 
+    // --- DEBOUNCE-логика автосохранения ---
+    LaunchedEffect(title, content) {
+        kotlinx.coroutines.delay(500)
+        viewModel.saveNote(title, content)
+    }
+
+    // --- Обработка быстрого выхода (например, Back) ---
+    DisposableEffect(Unit) {
+        onDispose {
+            // При закрытии (или уничтожении) этого Composable вызываем дополнительное сохранение
+            viewModel.saveNote(title, content)
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(if (note != null) "Edit Note" else "New Note") },
+                title = { Text(if (note != null) "Edit Note" else "New Note") }, //TODO: Поменять на название заметки (или как-то иначе сделать красивее)
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")

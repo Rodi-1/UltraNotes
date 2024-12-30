@@ -19,7 +19,7 @@ interface NoteDao {
     fun getNoteById(noteId: Int): Flow<Note?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(note: Note)
+    suspend fun insert(note: Note): Long
 
     @Update
     suspend fun update(note: Note)

@@ -29,16 +29,17 @@ class NoteEditorViewModel @Inject constructor(
         viewModelScope.launch {
             val currentNote = _note.value
             if (currentNote != null) {
-                // Обновление существующей заметки
+                // UPDATE
                 val updatedNote = currentNote.copy(title = title, content = content)
                 repository.updateNote(updatedNote)
+                _note.value = updatedNote
             } else {
-                // Создание новой заметки
-                val newNote = Note(
-                    title = title,
-                    content = content
-                )
-                repository.addNote(newNote)
+                // INSERT
+                val newNote = Note(title = title, content = content)
+                val generatedId = repository.addNote(newNote)
+
+                // Теперь _note.value уже не null
+                _note.value = newNote.copy(id = generatedId.toInt())
             }
         }
     }
