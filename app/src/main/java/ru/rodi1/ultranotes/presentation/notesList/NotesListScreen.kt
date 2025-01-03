@@ -3,6 +3,7 @@ package ru.rodi1.ultranotes.presentation.notesList
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,6 +11,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -44,30 +48,36 @@ fun NotesListScreen(
         floatingActionButtonPosition = FabPosition.End
 
     ) { contentPadding ->
-        LazyColumn(
+        LazyVerticalGrid(
+            columns = GridCells.Adaptive(minSize = 120.dp), // ширина плитки
+            contentPadding = PaddingValues(
+                start = 8.dp, end = 8.dp, top = 8.dp, bottom = 180.dp
+            ),
             modifier = Modifier
                 .padding(contentPadding)
-                .fillMaxSize()
         ) {
             items(notes) { note ->
-                NoteItem(
+                NoteGridItem(
                     note = note,
                     onClick = { onNoteClick(note.id) },
                     onDeleteClick = { onDeleteClick(note) }
-                    )
+                )
             }
-
         }
     }
 }
 @Composable
-fun NoteItem(note: Note, onClick: () -> Unit, onDeleteClick: () -> Unit) {
+fun NoteGridItem(
+    note: Note,
+    onClick: () -> Unit,
+    onDeleteClick: () -> Unit
+) {
     Card(
+        onClick = onClick,
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-            .clickable { onClick() },
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            .padding(4.dp)
+            .height(200.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Row(
             modifier = Modifier
@@ -93,30 +103,31 @@ fun NoteItem(note: Note, onClick: () -> Unit, onDeleteClick: () -> Unit) {
 
 
 
-@Preview
-@Composable
-fun NotesListScreenPreview() {
-    val notes = listOf(
-        Note(
-            id = 1,
-            title = "First Note",
-            content = "This is the first note"
-        ),
-        Note(
-            id = 2,
-            title = "Second Note",
-            content = "This is the second note"
-        ),
-        Note(
-            id = 3,
-            title = "Third Note",
-            content = "This is the third note"
-        )
-    )
-    NotesListScreen(
-        notes = notes,
-        onFabClick = {},
-        onNoteClick = {},
-        onDeleteClick = {}
-    )
-}
+
+//@Preview
+//@Composable
+//fun NotesListScreenPreview() {
+//    val notes = listOf(
+//        Note(
+//            id = 1,
+//            title = "First Note",
+//            content = "This is the first note"
+//        ),
+//        Note(
+//            id = 2,
+//            title = "Second Note",
+//            content = "This is the second note"
+//        ),
+//        Note(
+//            id = 3,
+//            title = "Third Note",
+//            content = "This is the third note"
+//        )
+//    )
+//    NotesListScreen(
+//        notes = notes,
+//        onFabClick = {},
+//        onNoteClick = {},
+//        onDeleteClick = {}
+//    )
+//}

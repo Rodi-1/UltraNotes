@@ -15,11 +15,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import ru.rodi1.ultranotes.ui.theme.UltraNotesTheme
 import ru.rodi1.ultranotes.viewmodel.NoteEditorViewModel
 
-//TODO+
-// Нужно будет передавать заголовок и контент из вне, чтобы отображать уже созданную заметку из бд.
-// При этом нужны дефолтные значения для случая создания новой заметки
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NoteEditorScreen(
