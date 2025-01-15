@@ -1,22 +1,20 @@
 package ru.rodi1.ultranotes.presentation.notesList
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FabPosition
@@ -26,26 +24,43 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.rodi1.ultranotes.data.local.Note
 import ru.rodi1.ultranotes.presentation.components.FAB
+import ru.rodi1.ultranotes.viewmodel.NotesListViewModel
 
 
 @Composable
 fun NotesListScreen(
-    notes: List<Note>,
+    viewModel: NotesListViewModel,
     onFabClick: () -> Unit,
     onNoteClick: (Int) -> Unit,
-    onDeleteClick: (Note) -> Unit
+
 ) {
+
+    val isSelectionMode by viewModel.isSelectionMode.collectAsState()
+    val selectedNotes by viewModel.selectedNotes.collectAsState()
+    val notes by viewModel.notes.collectAsState()
 
     Scaffold(
         floatingActionButton = {
-            FAB(onClick = onFabClick)
+            if (!isSelectionMode){
+            FAB(onClick = onFabClick)}
         },
-        floatingActionButtonPosition = FabPosition.End
+        floatingActionButtonPosition = FabPosition.End,
+        bottomBar = {
+            if (isSelectionMode) {
+                SelectionBottomBar(
+                    selectedCount = selectedNotes.size,
+                    onCloseSelection = { viewModel.clearSelection() },
+                    onDeleteSelected = { viewModel.deleteSelectedNotes() }
+                )
+            }
+        }
 
     ) { contentPadding ->
         LazyVerticalGrid(
@@ -56,47 +71,87 @@ fun NotesListScreen(
             modifier = Modifier
                 .padding(contentPadding)
         ) {
-            items(notes) { note ->
+            items(notes, key = {it.id}) { note ->
+                val isSelected = note.id in selectedNotes
                 NoteGridItem(
                     note = note,
-                    onClick = { onNoteClick(note.id) },
-                    onDeleteClick = { onDeleteClick(note) }
+                    isSelectionMode = isSelectionMode,
+                    isSelected = isSelected,
+                    onClick = {
+                        if (isSelectionMode) {
+                            viewModel.toggleSelection(note.id)
+                        } else {
+                            onNoteClick(note.id)
+                        }
+                    },
+                    onLongClick = {
+                        viewModel.enterSelectionMode(note.id)
+                    },
                 )
             }
         }
     }
 }
+
+@Composable
+fun SelectionBottomBar(
+    selectedCount: Int,
+    onCloseSelection: () -> Unit,
+    onDeleteSelected: () -> Unit
+) {
+    BottomAppBar(
+    ) {
+        // Кнопка «Закрыть режим»
+        IconButton(onClick = onCloseSelection) {
+            Icon(Icons.Default.Close, contentDescription = "Cancel selection")
+        }
+        Spacer(Modifier.width(16.dp))
+        Text(text = "Выбрано: $selectedCount", modifier = Modifier.align(Alignment.CenterVertically))
+        Spacer(Modifier.weight(1f)) // раздвинем вправо
+
+        IconButton(onClick = onDeleteSelected) {
+            Icon(Icons.Default.Delete, contentDescription = "Delete selected")
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun NoteGridItem(
     note: Note,
+    isSelectionMode: Boolean, // используем потом
+    isSelected: Boolean,
     onClick: () -> Unit,
-    onDeleteClick: () -> Unit
+    onLongClick: () -> Unit,
 ) {
+
+    val backgroundColor = if (isSelected) {
+        MaterialTheme.colorScheme.surfaceVariant
+    } else {
+        MaterialTheme.colorScheme.surface
+    }
+
     Card(
-        onClick = onClick,
         modifier = Modifier
             .padding(4.dp)
-            .height(200.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+            .height(200.dp)
+            .combinedClickable(
+                onClick = onClick,
+                onLongClick = onLongClick
+            ),
+        colors = CardDefaults.cardColors(containerColor = backgroundColor),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-        Row(
+
+        Column(
             modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+                .padding(12.dp)
         ) {
-            Column {
-                Text(text = note.title, style = MaterialTheme.typography.titleMedium)
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(text = note.content, style = MaterialTheme.typography.bodyMedium)
-            }
-            IconButton(onClick = { onDeleteClick() }) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete Note",
-                    tint = MaterialTheme.colorScheme.error
-                )
-            }
+            // Заголовок
+            Text(text = note.title, style = MaterialTheme.typography.titleMedium)
+            Spacer(modifier = Modifier.height(4.dp))
+            // Содержимое
+            Text(text = note.content, style = MaterialTheme.typography.bodyMedium)
         }
     }
 }

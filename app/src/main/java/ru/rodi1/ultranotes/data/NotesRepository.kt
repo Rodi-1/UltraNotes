@@ -24,6 +24,10 @@ class NotesRepository @Inject constructor(
         noteDao.delete(note)
     }
 
+    suspend fun deleteNoteById(noteId: Int) {
+        noteDao.deleteById(noteId)
+    }
+
     fun getNoteById(noteId: Int): Flow<Note?> {
         return noteDao.getNoteById(noteId)
     }

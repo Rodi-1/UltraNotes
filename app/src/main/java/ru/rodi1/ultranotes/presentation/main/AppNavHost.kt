@@ -1,8 +1,6 @@
 package ru.rodi1.ultranotes.presentation.main
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -20,17 +18,13 @@ fun AppNavHost(navController: NavHostController) {
     ) {
         composable("notesList") {
             val notesListViewModel: NotesListViewModel = hiltViewModel()
-            val notes by notesListViewModel.notes.collectAsState()
-
             NotesListScreen(
-                notes = notes,
+                viewModel = notesListViewModel,
+
                 onFabClick = { navController.navigate("noteEditor") },
                 onNoteClick = { noteId ->
                     navController.navigate("noteEditor/$noteId")
                 },
-                onDeleteClick = { note ->
-                    notesListViewModel.deleteNote(note)
-                }
             )
         }
         composable("noteEditor") {
